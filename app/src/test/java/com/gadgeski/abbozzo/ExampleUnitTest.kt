@@ -1,4 +1,4 @@
-package com.example.abbozzo
+package com.gadgeski.abbozzo
 
 import org.junit.Test
 
