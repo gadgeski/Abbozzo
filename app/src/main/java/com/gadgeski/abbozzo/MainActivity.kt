@@ -2,9 +2,11 @@ package com.gadgeski.abbozzo
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -14,18 +16,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gadgeski.abbozzo.ui.screen.CaptureScreen
 import com.gadgeski.abbozzo.ui.screen.InboxScreen
+import com.gadgeski.abbozzo.ui.screen.InboxViewModel
 import com.gadgeski.abbozzo.ui.theme.AbbozzoTheme
 import com.gadgeski.abbozzo.ui.theme.BlackBackground
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val inboxViewModel: InboxViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
-        val sharedText = handleSendIntent(intent)
-        val startDestination = if (sharedText != null) "capture" else "inbox"
+        // Handle intent if activity is created/recreated
+        handleSendIntent(intent)
 
         setContent {
             AbbozzoTheme {
@@ -33,38 +39,41 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = BlackBackground
                 ) {
-                    AppNavigation(
-                        startDestination = startDestination,
-                        sharedText = sharedText
-                    )
+                    AppNavigation()
                 }
             }
         }
     }
 
-    private fun handleSendIntent(intent: Intent): String? {
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent) // Update the intent property
+        handleSendIntent(intent)
+    }
+
+    private fun handleSendIntent(intent: Intent) {
         if (Intent.ACTION_SEND == intent.action && "text/plain" == intent.type) {
-            return intent.getStringExtra(Intent.EXTRA_TEXT)
+            intent.getStringExtra(Intent.EXTRA_TEXT)?.let { sharedText ->
+                inboxViewModel.addLog(sharedText)
+                Toast.makeText(this, "Saved via Abbozzo", Toast.LENGTH_SHORT).show()
+            }
         }
-        return null
     }
 }
 
 @Composable
-fun AppNavigation(startDestination: String, sharedText: String?) {
+fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(navController = navController, startDestination = "capture") {
         composable("inbox") {
             InboxScreen()
         }
         composable("capture") {
             CaptureScreen(
-                sharedText = sharedText,
+                sharedText = null, // Intent handling is done in MainActivity now
                 onNavigateToInbox = {
-                    navController.navigate("inbox") {
-                        popUpTo("capture") { inclusive = true }
-                    }
+                    navController.navigate("inbox")
                 }
             )
         }

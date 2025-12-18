@@ -20,8 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gadgeski.abbozzo.ui.component.BruteButton
 import com.gadgeski.abbozzo.ui.component.NoiseBackground
-import com.gadgeski.abbozzo.ui.theme.AcidGreen
-import com.gadgeski.abbozzo.ui.theme.NeonPurple
 
 @Composable
 fun CaptureScreen(
