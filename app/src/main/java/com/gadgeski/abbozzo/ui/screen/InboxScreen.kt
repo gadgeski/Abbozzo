@@ -10,10 +10,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -21,6 +28,8 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,6 +39,8 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.shadow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -64,6 +75,8 @@ fun InboxScreen(
     viewModel: InboxViewModel = hiltViewModel()
 ) {
     val logs by viewModel.logs.collectAsState()
+    val tags by viewModel.tags.collectAsState()
+    val selectedTag by viewModel.selectedTag.collectAsState()
     val context = LocalContext.current
 
     Scaffold(
@@ -111,8 +124,16 @@ fun InboxScreen(
                         blurRadius = 20f
                     )
                 ),
-                modifier = Modifier.padding(24.dp)
+                modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 8.dp)
             )
+
+            CyberpunkTagRow(
+                tags = tags,
+                selectedTag = selectedTag,
+                onTagClick = { viewModel.selectTag(it) }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             if (logs.isEmpty()) {
                 Column(
@@ -181,6 +202,97 @@ fun InboxScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CyberpunkTagRow(
+    tags: List<String>,
+    selectedTag: String?,
+    onTagClick: (String?) -> Unit
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp)
+    ) {
+        item {
+            CyberpunkChip(
+                text = "ALL",
+                isSelected = selectedTag == null,
+                onClick = { onTagClick(null) }
+            )
+        }
+        items(tags) { tag ->
+            CyberpunkChip(
+                text = tag.uppercase(),
+                isSelected = selectedTag == tag,
+                onClick = { onTagClick(tag) }
+            )
+        }
+    }
+}
+
+@Composable
+fun CyberpunkChip(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val borderColor = if (isSelected) Vermilion else Color(0xFF660000)
+    val backgroundColor = if (isSelected) Vermilion else Color.Transparent
+    val textColor = if (isSelected) Color.White else GrayText
+    
+    // Glow effect for selected chip
+    val infiniteTransition = rememberInfiniteTransition(label = "ChipGlow")
+    val glowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.5f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "GlowAlpha"
+    )
+
+    Box(
+        modifier = Modifier
+            .height(36.dp)
+            .clickable(onClick = onClick)
+            .background(
+                color = backgroundColor,
+                shape = CutCornerShape(8.dp)
+            )
+            .then(
+                if (!isSelected) {
+                    Modifier.border(BorderStroke(1.dp, borderColor), CutCornerShape(8.dp))
+                } else {
+                    Modifier
+                }
+            )
+            .then(
+                if (isSelected) {
+                    Modifier.shadow(
+                        elevation = 8.dp,
+                        shape = CutCornerShape(8.dp),
+                        ambientColor = Vermilion,
+                        spotColor = Vermilion
+                    )
+                } else Modifier
+            )
+            .padding(horizontal = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                letterSpacing = 1.sp
+            ),
+            color = if (isSelected) textColor.copy(alpha = glowAlpha) else textColor
+        )
     }
 }
 
