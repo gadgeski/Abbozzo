@@ -43,6 +43,13 @@ fun CaptureScreen(
             onNavigateToInbox()
         }
     }
+    
+    // React to editing state to pre-fill text
+    LaunchedEffect(uiState) {
+        if (uiState is CaptureUiState.Editing) {
+            text = (uiState as CaptureUiState.Editing).initialContent
+        }
+    }
 
     Scaffold { padding ->
         NoiseBackground(Modifier.padding(padding))
@@ -89,9 +96,9 @@ fun CaptureScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             when (val state = uiState) {
-                is CaptureUiState.Idle, is CaptureUiState.Success -> {
+                is CaptureUiState.Idle, is CaptureUiState.Success, is CaptureUiState.Editing -> {
                    BruteButton(
-                       text = "EXECUTE",
+                       text = if (state is CaptureUiState.Editing) "UPDATE" else "EXECUTE",
                        onClick = { 
                            if (text.isNotBlank()) {
                                viewModel.saveContent(text) 

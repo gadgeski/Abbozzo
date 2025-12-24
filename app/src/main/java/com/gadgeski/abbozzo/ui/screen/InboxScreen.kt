@@ -68,6 +68,7 @@ import com.gadgeski.abbozzo.ui.theme.Vermilion
 @Composable
 fun InboxScreen(
     onNavigateToCapture: () -> Unit,
+    onLogClick: (Long) -> Unit,
     viewModel: InboxViewModel = hiltViewModel()
 ) {
     val logs by viewModel.logs.collectAsState()
@@ -184,6 +185,7 @@ fun InboxScreen(
                     items(logs) { log ->
                         LogCard(
                             log = log,
+                            onClick = { onLogClick(log.id) },
                             onCopy = {
                                 val formatted = "Fix this error:\n```\n${log.content}\n```"
                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -294,8 +296,9 @@ fun CyberpunkChip(
 }
 
 @Composable
-fun LogCard(log: LogEntry, onCopy: () -> Unit, onDelete: () -> Unit) {
+fun LogCard(log: LogEntry, onClick: () -> Unit, onCopy: () -> Unit, onDelete: () -> Unit) {
     Card(
+        onClick = onClick,
         shape = CutCornerShape(topEnd = 16.dp),
         colors = CardDefaults.cardColors(containerColor = DarkSurface),
         border = BorderStroke(1.dp, NeonCyan.copy(alpha = 0.5f)),

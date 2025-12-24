@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.gadgeski.abbozzo.ui.screen.CaptureScreen
 import com.gadgeski.abbozzo.ui.screen.InboxScreen
 import com.gadgeski.abbozzo.ui.screen.InboxViewModel
@@ -74,10 +76,17 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = "inbox") {
         composable("inbox") {
             InboxScreen(
-                onNavigateToCapture = { navController.navigate("capture") }
+                onNavigateToCapture = { navController.navigate("capture") },
+                onLogClick = { logId -> navController.navigate("capture?logId=$logId") }
             )
         }
-        composable("capture") {
+        composable(
+            route = "capture?logId={logId}",
+            arguments = listOf(navArgument("logId") {
+                type = NavType.LongType
+                defaultValue = -1L
+            })
+        ) {
             CaptureScreen(
                 onNavigateToInbox = {
                     navController.navigate("inbox") {
