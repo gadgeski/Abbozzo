@@ -22,6 +22,9 @@ class InboxViewModel @Inject constructor(
     private val _selectedTag = MutableStateFlow<String?>(null)
     val selectedTag: StateFlow<String?> = _selectedTag
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
     val tags: StateFlow<List<String>> = repository.allLogs
         .map { logs ->
             logs.flatMap { log ->
@@ -37,18 +40,26 @@ class InboxViewModel @Inject constructor(
 
     val logs: StateFlow<List<LogEntry>> = combine(
         repository.allLogs,
-        _selectedTag
-    ) { allLogs, selectedTag ->
-        if (selectedTag == null) {
-            allLogs
-        } else {
-            allLogs.filter { it.content.contains(selectedTag) }
+        _selectedTag,
+        _searchQuery
+    ) { allLogs, selectedTag, query ->
+        var result = allLogs
+        if (selectedTag != null) {
+            result = result.filter { it.content.contains(selectedTag) }
         }
+        if (query.isNotBlank()) {
+            result = result.filter { it.content.contains(query, ignoreCase = true) }
+        }
+        result
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
+    }
 
     fun selectTag(tag: String?) {
         _selectedTag.value = tag
