@@ -88,6 +88,7 @@ import com.gadgeski.abbozzo.ui.theme.NeonPurple
 import com.gadgeski.abbozzo.ui.theme.Vermilion
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.gadgeski.abbozzo.ui.component.AbbozzoLinkText
 
 @Composable
 fun InboxScreen(
@@ -473,12 +474,13 @@ fun LogCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
+            AbbozzoLinkText(
                 text = log.content,
-                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier,
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
-                color = Color.White
+                onNonLinkClick = onClick // Pass parent click to handle non-link taps
             )
 
             Spacer(modifier = Modifier.height(12.dp))

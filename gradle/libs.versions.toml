@@ -13,6 +13,7 @@ room = "2.6.1"
 navigation = "2.7.7"
 hiltNavigationCompose = "1.2.0"
 ksp = "2.0.0-1.0.21"
+browser = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +47,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 
 # Icons
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
