@@ -89,10 +89,5 @@ class InboxViewModel @Inject constructor(
         }
     }
 
-    // Keep this for manual undo if needed, but primary is parameterless restoreLog()
-    fun restoreLog(log: LogEntry) {
-        viewModelScope.launch {
-            repository.addLog(log.content, log.tag, log.id)
-        }
-    }
+
 }

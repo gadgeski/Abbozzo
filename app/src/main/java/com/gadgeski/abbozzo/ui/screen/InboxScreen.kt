@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -54,8 +55,12 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -79,6 +84,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gadgeski.abbozzo.data.LogEntry
+import com.gadgeski.abbozzo.ui.component.AbbozzoLinkText
 import com.gadgeski.abbozzo.ui.component.NoiseBackground
 import com.gadgeski.abbozzo.ui.theme.DarkSurface
 import com.gadgeski.abbozzo.ui.theme.GrayText
@@ -88,12 +94,6 @@ import com.gadgeski.abbozzo.ui.theme.NeonPurple
 import com.gadgeski.abbozzo.ui.theme.Vermilion
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.gadgeski.abbozzo.ui.component.AbbozzoLinkText
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.material3.SwipeToDismissBoxState
-import androidx.compose.material.icons.filled.Delete
 
 @Composable
 fun InboxScreen(
@@ -107,7 +107,6 @@ fun InboxScreen(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
 
 
     Scaffold(
@@ -277,7 +276,6 @@ fun InboxScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                ) {
                     itemsIndexed(
                         items = logs,
                         key = { _, log -> log.id }
@@ -307,28 +305,23 @@ fun InboxScreen(
                         }
 
                         // Swipe to Dismiss State
-                        val currentLog = log 
-                        val dismissState = rememberSwipeToDismissBoxState(
-                            confirmValueChange = {
-                                if (it == SwipeToDismissBoxValue.EndToStart) {
-                                    // Trigger Delete
-                                    viewModel.deleteLog(currentLog)
-                                    scope.launch {
-                                        val result = snackbarHostState.showSnackbar(
-                                            message = "LOG_ENTRY_PURGED",
-                                            actionLabel = "UNDO",
-                                            duration = SnackbarDuration.Short
-                                        )
-                                        if (result == SnackbarResult.ActionPerformed) {
-                                            viewModel.restoreLog()
-                                        }
+                        val dismissState = rememberSwipeToDismissBoxState()
+
+                        LaunchedEffect(dismissState.currentValue) {
+                            if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+                                viewModel.deleteLog(log)
+                                scope.launch {
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = "LOG_ENTRY_PURGED",
+                                        actionLabel = "UNDO",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        viewModel.restoreLog()
                                     }
-                                    true
-                                } else {
-                                    false
                                 }
                             }
-                        )
+                        }
 
                         SwipeToDismissBox(
                             state = dismissState,
