@@ -1,5 +1,6 @@
 ```
 Abbozzo/
+├── Readme.md
 ├── STRUCTURE.md
 ├── app
 │   ├── build.gradle.kts
@@ -8,11 +9,12 @@ Abbozzo/
 │       ├── androidTest
 │       │   └── java
 │       │       └── com
-│       │           └── example
+│       │           └── gadgeski
 │       │               └── abbozzo
 │       │                   └── ExampleInstrumentedTest.kt
 │       ├── main
 │       │   ├── AndroidManifest.xml
+│       │   ├── ic_launcher-playstore.png
 │       │   ├── java
 │       │   │   └── com
 │       │   │       └── gadgeski
@@ -28,6 +30,7 @@ Abbozzo/
 │       │   │               │   └── AppModule.kt
 │       │   │               └── ui
 │       │   │                   ├── component
+│       │   │                   │   ├── AbbozzoLinkText.kt
 │       │   │                   │   ├── BruteButton.kt
 │       │   │                   │   └── NoiseBackground.kt
 │       │   │                   ├── screen
@@ -43,23 +46,31 @@ Abbozzo/
 │       │       ├── drawable
 │       │       │   ├── ic_launcher_background.xml
 │       │       │   └── ic_launcher_foreground.xml
+│       │       ├── font
+│       │       │   └── bbh_bartle_regular.ttf
 │       │       ├── mipmap-anydpi
+│       │       ├── mipmap-anydpi-v26
 │       │       │   ├── ic_launcher.xml
 │       │       │   └── ic_launcher_round.xml
 │       │       ├── mipmap-hdpi
 │       │       │   ├── ic_launcher.webp
+│       │       │   ├── ic_launcher_foreground.webp
 │       │       │   └── ic_launcher_round.webp
 │       │       ├── mipmap-mdpi
 │       │       │   ├── ic_launcher.webp
+│       │       │   ├── ic_launcher_foreground.webp
 │       │       │   └── ic_launcher_round.webp
 │       │       ├── mipmap-xhdpi
 │       │       │   ├── ic_launcher.webp
+│       │       │   ├── ic_launcher_foreground.webp
 │       │       │   └── ic_launcher_round.webp
 │       │       ├── mipmap-xxhdpi
 │       │       │   ├── ic_launcher.webp
+│       │       │   ├── ic_launcher_foreground.webp
 │       │       │   └── ic_launcher_round.webp
 │       │       ├── mipmap-xxxhdpi
 │       │       │   ├── ic_launcher.webp
+│       │       │   ├── ic_launcher_foreground.webp
 │       │       │   └── ic_launcher_round.webp
 │       │       ├── values
 │       │       │   ├── colors.xml
@@ -71,7 +82,7 @@ Abbozzo/
 │       └── test
 │           └── java
 │               └── com
-│                   └── example
+│                   └── gadgeski
 │                       └── abbozzo
 │                           └── ExampleUnitTest.kt
 ├── build.gradle.kts
@@ -86,5 +97,5 @@ Abbozzo/
 ├── local.properties
 └── settings.gradle.kts
 
-36 directories, 50 files
+38 directories, 59 files
 ```
