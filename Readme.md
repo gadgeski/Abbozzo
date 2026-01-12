@@ -14,6 +14,17 @@ Abbozzo（アボッツォ：イタリア語で「下書き」「ラフスケッ�
 - **Share-First:** アプリを開いて書くのではなく、他アプリからの「共有」で受け取ることに特化。
 - **Clean Architecture:** 見た目はパンクでも、中身は堅牢なモダン Android 設計。
 
+## アプリ画面
+
+<table>
+<tr>
+<td align="center">
+<img src="docs/img/Abbozzo_Home.png" alt="ホーム" height="500">
+<br>
+<sub>ホーム</sub>
+</tr>
+</table>
+
 ---
 
 ## 🇺🇸 Overview
